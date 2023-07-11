@@ -1,0 +1,114 @@
+{
+    "os": "Linux-5.15.0-71-generic-x86_64-with-glibc2.35",
+    "python": "3.10.9",
+    "heartbeatAt": "2023-07-09T08:11:58.248401",
+    "startedAt": "2023-07-09T08:11:57.195210",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--base_model",
+        "EleutherAI/pythia-160m-deduped",
+        "--data_path",
+        "yahma/alpaca-cleaned",
+        "--output_dir",
+        "./lora-alpaca",
+        "--batch_size",
+        "4",
+        "--micro_batch_size",
+        "4",
+        "--num_epochs",
+        "3",
+        "--learning_rate",
+        "1e-4",
+        "--cutoff_len",
+        "1024",
+        "--val_set_size",
+        "2000",
+        "--lora_r",
+        "8",
+        "--lora_alpha",
+        "16",
+        "--lora_dropout",
+        "0.05",
+        "--lora_target_modules",
+        "[query_key_value,xxx]",
+        "--esume_from_checkpoint",
+        "False"
+    ],
+    "state": "running",
+    "program": "/home/doan/alpaca-lora/finetune.py",
+    "codePath": "finetune.py",
+    "git": {
+        "remote": "https://github.com/tloen/alpaca-lora",
+        "commit": "8bb8579e403dc78e37fe81ffbb253c413007323f"
+    },
+    "email": null,
+    "root": "/home/doan/alpaca-lora",
+    "host": "Doan",
+    "username": "doan",
+    "executable": "/home/doan/miniconda3/bin/python",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 2335.1487500000003,
+        "min": 800.0,
+        "max": 4400.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2800.0,
+            "min": 800.0,
+            "max": 4400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 4400.0
+        },
+        {
+            "current": 2500.0,
+            "min": 800.0,
+            "max": 4400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 4400.0
+        },
+        {
+            "current": 2081.19,
+            "min": 800.0,
+            "max": 4400.0
+        },
+        {
+            "current": 4400.0,
+            "min": 800.0,
+            "max": 4400.0
+        },
+        {
+            "current": 800.0,
+            "min": 800.0,
+            "max": 4400.0
+        },
+        {
+            "current": 2900.0,
+            "min": 800.0,
+            "max": 4400.0
+        }
+    ],
+    "disk": {
+        "total": 467.8895797729492,
+        "used": 376.847599029541
+    },
+    "gpu": "NVIDIA GeForce GTX 1650",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce GTX 1650",
+            "memory_total": 4294967296
+        }
+    ],
+    "memory": {
+        "total": 23.372947692871094
+    }
+}

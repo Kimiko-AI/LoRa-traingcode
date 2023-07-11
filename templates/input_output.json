@@ -1,0 +1,6 @@
+{
+    "description": "Template used by nRuaif",
+    "prompt_input": "{input}{output}",
+    "prompt_no_input": "{input}",
+    "response_split": ""    
+}
