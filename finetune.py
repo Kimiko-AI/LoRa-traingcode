@@ -23,10 +23,11 @@ from peft import (
 from transformers import AutoTokenizer, AutoModelForCausalLM,  BitsAndBytesConfig
 
 from utils.prompter import Prompter
-from llama_flash_attn_monkey_patch import (
-    replace_llama_attn_with_flash_attn,
-)
+
+from llama_flash_attn_monkey_patch import replace_llama_attn_with_flash_attn
 replace_llama_attn_with_flash_attn()
+
+
 
 def train(
     # model/data params
@@ -123,7 +124,6 @@ def train(
         torch_dtype=torch.bfloat16,
         device_map=device_map,
         trust_remote_code=True,
-        mem_dtype='bfloat16',
         
     )
 
@@ -252,7 +252,7 @@ def train(
             num_train_epochs=num_epochs,
             learning_rate=learning_rate,
             bf16=True,
-            tf16=True
+            tf16=True,
             logging_steps=10,
             optim="adamw_bnb_8bit",
             evaluation_strategy="steps" if val_set_size > 0 else "no",
