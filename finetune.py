@@ -256,7 +256,7 @@ def train(
             bf16=True,
             tf32=True,
             logging_steps=10,
-            optim="paged_lion8bit",
+            optim="paged_lion_8bit",
             evaluation_strategy="steps" if val_set_size > 0 else "no",
             save_strategy="steps",
             eval_steps=200 if val_set_size > 0 else None,
