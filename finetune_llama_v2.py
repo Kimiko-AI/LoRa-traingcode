@@ -67,7 +67,7 @@ class ScriptArguments:
         metadata={
             "help": "The model that you want to train from the Hugging Face hub. E.g. gpt2, gpt2-xl, bert, etc."
         },
-        requried=True,
+        require=True,
     )
     dataset_name: Optional[str] = field(
         default="timdettmers/openassistant-guanaco",
