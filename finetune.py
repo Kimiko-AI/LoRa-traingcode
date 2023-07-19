@@ -164,7 +164,6 @@ def train(
     def generate_and_tokenize_prompt(data_point):
         full_prompt = data_point["instruction"]+"\n"+ data_point["response"],
         
-        print(full_prompt)
         tokenized_full_prompt = tokenize(full_prompt)
         if not train_on_inputs:
             user_prompt = prompter.generate_prompt(
@@ -255,15 +254,15 @@ def train(
             num_train_epochs=num_epochs,
             learning_rate=learning_rate,
             bf16=True,
-            tf16=True,
+            tf32=True,
             logging_steps=10,
-            optim="adamw_bnb_8bit",
+            optim="paged_lion8bit",
             evaluation_strategy="steps" if val_set_size > 0 else "no",
             save_strategy="steps",
             eval_steps=200 if val_set_size > 0 else None,
             save_steps=500,
             output_dir=output_dir,
-            save_total_limit=3,
+            save_total_limit=16,
             load_best_model_at_end=True if val_set_size > 0 else False,
             ddp_find_unused_parameters=False if ddp else None,
             group_by_length=group_by_length,
