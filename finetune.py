@@ -36,8 +36,8 @@ def train(
     data_path: str = "nRuaif/Super-good-instruction-data",
     output_dir: str = "./lora-alpaca",
     # training hyperparams
-    batch_size: int = 128,
-    micro_batch_size: int = 256,
+    batch_size: int = 256,
+    micro_batch_size: int = 128,
     num_epochs: int = 3,
     learning_rate: float = 3e-4,
     cutoff_len: int = 1024,
@@ -97,7 +97,6 @@ def train(
         base_model
     ), "Please specify a --base_model, e.g. --base_model='huggyllama/llama-7b'"
     gradient_accumulation_steps = batch_size // micro_batch_size
-
     prompter = Prompter(prompt_template_name)
 
     device_map = "auto"
