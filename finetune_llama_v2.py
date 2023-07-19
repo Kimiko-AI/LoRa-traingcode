@@ -183,9 +183,9 @@ def create_and_prepare_model(args):
 
 def formatting_prompts_func(examples):
     output_text = []
-    for i in range(len(examples["input"])):
-        input = examples["input"][i]
-        output = examples["output"][i]
+    for i in range(len(examples["instruction"])):
+        input = examples["instruction"][i]
+        output = examples["response"][i]
         output_text.append(input+"\n"+output)
 
     return output_text
