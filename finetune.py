@@ -18,28 +18,29 @@ from peft import (
     get_peft_model,
     get_peft_model_state_dict,
     prepare_model_for_int8_training,
+    prepare_model_for_kbit_training,
     set_peft_model_state_dict,
 )
 from transformers import AutoTokenizer, AutoModelForCausalLM,  BitsAndBytesConfig
 
 from utils.prompter import Prompter
 
-from llama_flash_attn_monkey_patch import replace_llama_attn_with_flash_attn
-replace_llama_attn_with_flash_attn()
+from llama_attn_hijack_xformers import hijack_llama_attention
+hijack_llama_attention()
 
 
 
 def train(
     # model/data params
     base_model: str = "",  # the only required argument
-    data_path: str = "yahma/alpaca-cleaned",
+    data_path: str = "nRuaif/Super-good-instruction-data",
     output_dir: str = "./lora-alpaca",
     # training hyperparams
     batch_size: int = 128,
-    micro_batch_size: int = 4,
+    micro_batch_size: int = 256,
     num_epochs: int = 3,
     learning_rate: float = 3e-4,
-    cutoff_len: int = 2048,
+    cutoff_len: int = 4096,
     val_set_size: int = 50,
     # lora hyperparams
     lora_r: int = 8,
@@ -56,7 +57,7 @@ def train(
     ],
     # llm hyperparams
     train_on_inputs: bool = False,  # if False, masks out inputs in loss
-    add_eos_token: bool = False,
+    add_eos_token: bool = True,
     group_by_length: bool = False,  # faster, but produces an odd training loss curve
     # wandb params
     wandb_project: str = "",
@@ -120,7 +121,11 @@ def train(
 
     model = AutoModelForCausalLM.from_pretrained(
         base_model,
-        load_in_8bit=True,
+        load_in_8bit=False,
+        load_in_4bit=True,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16,
         torch_dtype=torch.bfloat16,
         device_map=device_map,
         trust_remote_code=True,
@@ -183,7 +188,7 @@ def train(
         return tokenized_full_prompt
         
 
-    #model = prepare_model_for_int8_training(model)
+    model = prepare_model_for_kbit_training(model)
 
     config = LoraConfig(
         r=lora_r,
