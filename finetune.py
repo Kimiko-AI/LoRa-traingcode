@@ -21,12 +21,13 @@ from peft import (
     prepare_model_for_kbit_training,
     set_peft_model_state_dict,
 )
-from transformers import AutoTokenizer, AutoModelForCausalLM,  BitsAndBytesConfig
-
-from utils.prompter import Prompter
 
 from llama_attn_hijack_xformers import hijack_llama_attention
 hijack_llama_attention()
+
+from transformers import AutoTokenizer, AutoModelForCausalLM,  BitsAndBytesConfig
+
+from utils.prompter import Prompter
 
 
 
