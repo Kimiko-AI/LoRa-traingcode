@@ -26,7 +26,7 @@ from utils.prompter import Prompter
 from llama_attn_hijack_xformers import hijack_llama_attention
 hijack_llama_attention()
 
-
+IGNORE_INDEX = -100
 
 def train(
     # model/data params
@@ -35,7 +35,7 @@ def train(
     output_dir: str = "./lora-pyg",
     # training hyperparams
     batch_size: int = 24,
-    micro_batch_size: int = 2,
+    micro_batch_size: int = 4,
     num_epochs: int = 3,
     learning_rate: float = 3e-4,
     cutoff_len: int = 4096,
@@ -160,23 +160,24 @@ def train(
             labels = []
             if convo["role"] == "system":
                 input_ids += tokenize("<|system|>\n\n" + convo["content"]+ "\n\n")["input_ids"]
-             #   labels += [IGNORE_INDEX] * len(input_ids)
-                labels += input_ids
+                labels += [IGNORE_INDEX] * len(input_ids)
+              #  labels += input_ids
 
             if convo["role"] == "assistant":
                 input_ids += tokenize("<|model|>\n" + convo["content"] + "\n\n")["input_ids"]
                 labels += input_ids
 
             if convo["role"] == "user":
-                input_ids += tokenize("<|user|>\n"+convo["content"]+"\n\n")["input_ids"]
+               # input_ids += tokenize("<|user|>\n"+convo["content"]+"\n\n")["input_ids"]
+                labels += [IGNORE_INDEX] * len(input_ids)
                 labels += input_ids
 
 
             model_inputs["input_ids"] += input_ids
             model_inputs["labels"] += labels
-        if len(model_inputs["input_ids"]) >= 768:
-            model_inputs["input_ids"] = model_inputs["input_ids"][:768]
-            model_inputs["labels"] = model_inputs["labels"][:768 ]
+        if len(model_inputs["input_ids"]) >= 4096:
+            model_inputs["input_ids"] = model_inputs["input_ids"][:4096]
+            model_inputs["labels"] = model_inputs["labels"][:4096 ]
         print(model_inputs["labels"]) 
         return model_inputs
 
