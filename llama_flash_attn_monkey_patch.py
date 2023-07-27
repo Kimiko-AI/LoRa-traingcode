@@ -12,7 +12,7 @@ from einops import rearrange
 from flash_attn.flash_attn_interface import flash_attn_unpadded_qkvpacked_func
 from flash_attn.bert_padding import unpad_input, pad_input
 
-
+print("Patching")
 def forward(
     self,
     hidden_states: torch.Tensor,

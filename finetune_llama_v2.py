@@ -40,8 +40,8 @@ hijack_llama_attention()
 # Versions used:
 # accelerate == 0.21.0
 # peft == 0.4.0
-# bitsandbytes == 0.40.2
-# transformers == 4.30.2
+# bitsandbytes==0.40.2
+# transformers==4.30.2
 # trl == 0.4.7
 
 @dataclass
@@ -52,18 +52,18 @@ class ScriptArguments:
 
     local_rank: Optional[int] = field(default=-1, metadata={"help": "Used for multi-gpu"})
 
-    per_device_train_batch_size: Optional[int] = field(default=4)
+    per_device_train_batch_size: Optional[int] = field(default=1)
     per_device_eval_batch_size: Optional[int] = field(default=1)
     gradient_accumulation_steps: Optional[int] = field(default=4)
     learning_rate: Optional[float] = field(default=2e-4)
     max_grad_norm: Optional[float] = field(default=0.3)
     weight_decay: Optional[int] = field(default=0.001)
-    lora_alpha: Optional[int] = field(default=16)
+    lora_alpha: Optional[int] = field(default=2)
     lora_dropout: Optional[float] = field(default=0.1)
-    lora_r: Optional[int] = field(default=64)
-    max_seq_length: Optional[int] = field(default=4096)
+    lora_r: Optional[int] = field(default=4)
+    max_seq_length: Optional[int] = field(default=512)
     model_name: Optional[str] = field(
-        default="meta-llama/Llama-2-7b-hf",
+        default="EleutherAI/pythia-70m-deduped",
         metadata={
             "help": "The model that you want to train from the Hugging Face hub. E.g. gpt2, gpt2-xl, bert, etc."
         },
@@ -73,7 +73,7 @@ class ScriptArguments:
         metadata={"help": "The preference dataset to use."},
     )
     use_4bit: Optional[bool] = field(
-        default=True,
+        default=False,
         metadata={"help": "Activate 4bit precision base model loading"},
     )
     use_nested_quant: Optional[bool] = field(
@@ -81,7 +81,7 @@ class ScriptArguments:
         metadata={"help": "Activate nested quantization for 4bit base models"},
     )
     bnb_4bit_compute_dtype: Optional[str] = field(
-        default="float16",
+        default="bfloat16",
         metadata={"help": "Compute dtype for 4bit base models"},
     )
     bnb_4bit_quant_type: Optional[str] = field(
@@ -101,7 +101,7 @@ class ScriptArguments:
         metadata={"help": "Enables bf16 training."},
     )
     packing: Optional[bool] = field(
-        default=False,
+        default=True,
         metadata={"help": "Use packing dataset creating."},
     )
     gradient_checkpointing: Optional[bool] = field(
@@ -109,7 +109,7 @@ class ScriptArguments:
         metadata={"help": "Enables gradient checkpointing."},
     )
     optim: Optional[str] = field(
-        default="paged_adamw_32bit",
+        default="paged_lion_32bit",
         metadata={"help": "The optimizer to use."},
     )
     lr_scheduler_type: str = field(
@@ -119,7 +119,7 @@ class ScriptArguments:
     max_steps: int = field(default=10000, metadata={"help": "How many optimizer update steps to take"})
     warmup_ratio: float = field(default=0.03, metadata={"help": "Fraction of steps to do a warmup for"})
     group_by_length: bool = field(
-        default=True,
+        default=False,
         metadata={
             "help": "Group sequences into batches with same length. Saves memory and speeds up training considerably."
         },
@@ -181,12 +181,6 @@ def create_and_prepare_model(args):
 
     return model, peft_config, tokenizer
 
-def formatting_prompts_func(examples):
-    output_text = []
-    for i in range(len(examples["instruction"])):
-        input = examples["instruction"][i]
-        output = examples["response"][i]
-        output_text.append(input+"\n"+output)
 
     return output_text
 
@@ -218,8 +212,8 @@ trainer = SFTTrainer(
     model=model,
     train_dataset=dataset,
     peft_config=peft_config,
-    formatting_func=formatting_prompts_func,
     max_seq_length=script_args.max_seq_length,
+    dataset_text_field = "text",
     tokenizer=tokenizer,
     args=training_arguments,
     packing=script_args.packing,
