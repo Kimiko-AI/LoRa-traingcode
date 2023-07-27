@@ -30,22 +30,28 @@ hijack_llama_attention()
 
 def train(
     # model/data params
-    base_model: str = "EleutherAI/pythia-70m-deduped",  # the only required argument
+    base_model: str = "meta-llama/Llama-2-7b-hf",  # the only required argument
     data_path: str = "nRuaif/test",
-    output_dir: str = "./lora-alpaca",
+    output_dir: str = "./lora-pyg",
     # training hyperparams
-    batch_size: int = 8,
-    micro_batch_size: int = 1,
+    batch_size: int = 24,
+    micro_batch_size: int = 2,
     num_epochs: int = 3,
     learning_rate: float = 3e-4,
-    cutoff_len: int = 768,
-    val_set_size: int = 5,
+    cutoff_len: int = 4096,
+    val_set_size: int = 20,
     # lora hyperparams
     lora_r: int = 8,
     lora_alpha: int = 16,
     lora_dropout: float = 0.05,
     lora_target_modules: List[str] = [
-        "query_key_value",
+        "gate_proj",
+  "down_proj",
+  "up_proj",
+  "q_proj",
+  "v_proj",
+  "k_proj",
+  "o_proj",
     ],
     # llm hyperparams
     train_on_inputs: bool = True,  # if False, masks out inputs in loss
@@ -269,6 +275,7 @@ def train(
             num_train_epochs=num_epochs,
             learning_rate=learning_rate,
             fp16=False,
+            bf16=True,
             logging_steps=10,
             optim="adamw_torch",
             evaluation_strategy="steps" if val_set_size > 0 else "no",
