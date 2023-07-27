@@ -154,7 +154,6 @@ def train(
         model_inputs = {"input_ids": [], "labels": []}
         # First element will be system prompt, we don't want to mask it as loss, however ignore every system prompt from now on
         data = ast.literal_eval(str(data_point))
-        print(data)
         for convo in data["text"]:
             input_ids = []
             labels = []
@@ -178,7 +177,6 @@ def train(
         if len(model_inputs["input_ids"]) >= 4096:
             model_inputs["input_ids"] = model_inputs["input_ids"][:4096]
             model_inputs["labels"] = model_inputs["labels"][:4096 ]
-        print(model_inputs["labels"]) 
         return model_inputs
 
     def generate_and_tokenize_promp(data_point):
